@@ -5,7 +5,7 @@ import SettingsIcon from '/Settings.svg';
 
 const ProfilePanel = () => {
   return (
-    <div className="fixed top-4 left-4 bg-white/20 backdrop-blur-xl rounded-full p-4 flex items-center space-x-4 shadow-lg border border-white/20 min-w-md">
+    <div className="fixed top-5 left-5 bg-white/30 backdrop-blur-xl rounded-full p-4 flex items-center space-x-4 shadow-lg border border-white/20 min-w-md">
       <img
         src={profilePic}
         alt="Profile"
