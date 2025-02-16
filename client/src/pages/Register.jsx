@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import InputField from '../components/InputField';
 import { apiRequest } from '../services/api';
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -15,7 +18,12 @@ const Register = () => {
     try {
       // Send the data to the backend
       const data = await apiRequest('/register', 'POST', formData);
-      data.error ? alert(data.error) : alert('User registered successful!');
+      if (data.error) {
+        alert(data.error);
+      } else {
+        alert('User registered successfully!');
+        navigate('/login');
+      }
     } catch (error) {
       console.error(error);
     }
