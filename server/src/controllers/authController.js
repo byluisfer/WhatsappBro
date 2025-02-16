@@ -1,4 +1,7 @@
 const pool = require('../db/database');
+const jwt = require('jsonwebtoken');
+
+const SECRET_KEY = 'supersecret123';
 
 exports.register = async (req, res) => {
   // Get the username, email and password from the request
@@ -27,9 +30,15 @@ exports.login = async (req, res) => {
       email,
     ]);
     // If the user does not exist or the password is incorrect, return an error
-    if (rows.length === 0 || rows[0].password !== password)
+    if (rows.length === 0 || rows[0].password !== password) {
       return res.status(401).json({ error: 'Invalid credentials' });
-    res.status(200).json({ message: 'Login successful', userId: rows[0].id });
+    }
+    const user = rows[0];
+    // Create a token
+    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
+      expiresIn: '1h',
+    });
+    res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

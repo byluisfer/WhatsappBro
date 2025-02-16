@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import InputField from '../components/InputField';
 import { apiRequest } from '../services/api';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -14,7 +17,13 @@ const Login = () => {
     try {
       // Send the data to the backend
       const data = await apiRequest('/login', 'POST', formData);
-      data.error ? alert(data.error) : alert('Login successful!');
+      if (data.error) {
+        alert(data.error);
+      } else {
+        localStorage.setItem('token', data.token); // Save the token in local storage
+        alert('Login successful!');
+        navigate('/');
+      }
     } catch (error) {
       console.error(error);
     }
