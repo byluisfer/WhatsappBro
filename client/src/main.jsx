@@ -5,15 +5,18 @@ import App from './App.jsx';
 import './index.css';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
+import { AuthProvider } from './context/AuthContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </AuthProvider>
     </Router>
   </React.StrictMode>
 );
