@@ -35,7 +35,7 @@ const Login = () => {
         <img
           src="./Logo.webp"
           alt="Logo"
-          className="mx-auto mb-6 w-40 h-40 object-contain"
+          className="mx-auto mb-10 w-30 h-30 object-contain"
         />
         <h2 className="text-center text-3xl font-bold text-white mb-10">
           Login to WhatsappBro
