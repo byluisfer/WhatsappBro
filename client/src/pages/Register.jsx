@@ -1,4 +1,6 @@
 import React from 'react';
+import InputField from '../components/InputField';
+import { apiRequest } from '../services/api';
 
 const Register = () => {
   const handleSubmit = async (e) => {
@@ -10,27 +12,12 @@ const Register = () => {
       email: e.target.email.value,
       password: e.target.password.value,
     };
-
     try {
       // Send the data to the backend
-      const response = await fetch('http://localhost:3000/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      // Convert the data in JSON and show a alert from the end result
-      const data = await response.json();
-      if (response.ok) {
-        alert('User created successfully!');
-        console.log(data);
-      } else {
-        alert(data.error);
-      }
+      const data = await apiRequest('/register', 'POST', formData);
+      data.error ? alert(data.error) : alert('User registered successful!');
     } catch (error) {
-      console.error('Error:', error);
+      console.error(error);
     }
   };
 
@@ -46,56 +33,10 @@ const Register = () => {
           Register on WhatsappBro
         </h2>
 
-        <form id="registerForm" className="space-y-6" onSubmit={handleSubmit}>
-          <div className="relative">
-            <input
-              placeholder="Username"
-              class="peer w-full h-13 px-4 text-white bg-gray-900/50 rounded-xl border border-white/20 placeholder-transparent focus:outline-none focus:border-white"
-              required
-              id="username"
-              name="username"
-              type="text"
-            />
-            <label
-              htmlFor="username"
-              class="absolute left-4 top-3 text-gray-400 text-base transition-all peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-3 peer-focus:top-0 peer-focus:text-xs peer-focus:opacity-100 opacity-0"
-            >
-              Username
-            </label>
-          </div>
-          <div className="relative">
-            <input
-              placeholder="Email"
-              className="peer w-full h-13 px-4 text-white bg-gray-900/50 rounded-xl border border-white/20 placeholder-transparent focus:outline-none focus:border-white"
-              required
-              id="email"
-              name="email"
-              type="email"
-            />
-            <label
-              htmlFor="email"
-              class="absolute left-4 top-3 text-gray-400 text-base transition-all peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-3 peer-focus:top-0 peer-focus:text-xs peer-focus:opacity-100 opacity-0"
-            >
-              Email
-            </label>
-          </div>
-          <div className="relative">
-            <input
-              placeholder="Password"
-              className="peer w-full h-13 px-4 text-white bg-gray-900/50 rounded-xl border border-white/20 placeholder-transparent focus:outline-none focus:border-white"
-              required
-              id="password"
-              name="password"
-              type="password"
-            />
-            <label
-              htmlFor="password"
-              class="absolute left-4 top-3 text-gray-400 text-base transition-all peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-3 peer-focus:top-0 peer-focus:text-xs peer-focus:opacity-100 opacity-0"
-            >
-              Password
-            </label>
-          </div>
-
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <InputField id="username" label="Username" type="text" />
+          <InputField id="email" label="Email" type="email" />
+          <InputField id="password" label="Password" type="password" />
           <button
             className="w-full py-3 px-4 bg-teal-900 cursor-pointer hover:bg-teal-600/50 rounded-2xl shadow-lg text-white font-semibold transition duration-300"
             type="submit"
@@ -117,5 +58,4 @@ const Register = () => {
     </div>
   );
 };
-
 export default Register;
