@@ -4,11 +4,37 @@ import profilePic from '/Profile_Photo1.webp';
 import PlusIcon from '/Add_Contact.svg';
 import SettingsIcon from '/Settings.svg';
 
-const ProfilePanel = () => {
+const ProfilePanel = ({ onAddContact }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [username, setUsername] = useState('');
 
+  // To close and open the popup
   const handleAddClick = () => setShowPopup(true);
   const closePopup = () => setShowPopup(false);
+
+  const handleAddContact = async () => {
+    if (!username.trim()) return alert('Username cannot be empty');
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/auth/contacts/add`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username }),
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        onAddContact(data.contact); // Pass the contact to the parent component
+        closePopup();
+      } else {
+        alert(data.error || 'Failed to add contact');
+      }
+    } catch (error) {
+      console.error('Error adding contact:', error);
+      alert('An error occurred when adding the contact');
+    }
+  };
 
   return (
     <>
@@ -42,11 +68,13 @@ const ProfilePanel = () => {
           <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-2xl shadow-lg w-80 max-w-sm">
               <h2 className="text-lg font-semibold mb-4 text-center">
-                Add new contact
+                Add New Contact
               </h2>
               <input
                 type="text"
                 placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
               <div className="flex justify-end space-x-2">
@@ -56,7 +84,10 @@ const ProfilePanel = () => {
                 >
                   Cancel
                 </button>
-                <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition cursor-pointer">
+                <button
+                  onClick={handleAddContact}
+                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition cursor-pointer"
+                >
                   Add
                 </button>
               </div>

@@ -43,3 +43,29 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.addContact = async (req, res) => {
+  // Get the username from the request
+  const { username } = req.body;
+  try {
+    // Consult to the db and save in a variable "rows"
+    const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [
+      username,
+    ]);
+    // If the user does not exist, return an error
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const user = rows[0];
+    res.status(200).json({
+      contact: {
+        id: user.id,
+        name: user.username,
+        message: 'New contact added!',
+        avatar: '/Default_Profile.webp',
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding contact: ' + error.message });
+  }
+};
