@@ -15,5 +15,10 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL
 );
 
+-- Insertar usuarios iniciales si no existen
+INSERT INTO users (username, email, password) VALUES
+('Ibai', 'noah@gmail.com', '123'),
+('Pessi', 'augi@gmail.com', '123');
+
 -- Confirmation message
 SELECT '✅ DB and Tables right created' AS status;
