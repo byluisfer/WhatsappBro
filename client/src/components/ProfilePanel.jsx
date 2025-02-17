@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import profilePic from '/Profile_Photo1.webp';
 import PlusIcon from '/Add_Contact.svg';
 import SettingsIcon from '/Settings.svg';
+import { jwtDecode } from 'jwt-decode';
 
 const ProfilePanel = ({ onAddContact }) => {
+  // Set the initial state of the user
+  const [user, setUser] = useState({
+    username: '',
+    email: '',
+    profilePic: 'Default_Profile.webp', // Default profile image
+  });
   const [showPopup, setShowPopup] = useState(false);
   const [username, setUsername] = useState('');
 
-  // To close and open the popup
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = jwtDecode(token); // Decode the token
+      setUser({
+        username: decoded.username,
+        email: decoded.email,
+        profilePic: decoded.profileImage,
+      });
+    }
+  }, []);
+
   const handleAddClick = () => setShowPopup(true);
   const closePopup = () => setShowPopup(false);
 
@@ -40,13 +57,15 @@ const ProfilePanel = ({ onAddContact }) => {
     <>
       <div className="fixed top-4 left-4 bg-white/20 backdrop-blur-xl rounded-full p-4 flex items-center space-x-4 shadow-lg border border-white/20 min-w-md">
         <img
-          src={profilePic}
+          src={`/${user.profilePic}`} // Use the profilePic prop from the user object
           alt="Profile"
           className="w-16 h-16 rounded-full object-cover"
         />
         <div className="flex flex-col">
-          <span className="text-white font-semibold text-lg">AncaraPessi</span>
-          <span className="text-gray-300 text-sm">messimalo@gmail.com</span>
+          <span className="text-white font-semibold text-lg">
+            {user.username}
+          </span>
+          <span className="text-gray-300 text-sm">{user.email}</span>
         </div>
         <div className="flex items-center space-x-2 ml-auto">
           <img

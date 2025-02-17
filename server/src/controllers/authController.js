@@ -6,11 +6,12 @@ const SECRET_KEY = 'supersecret123';
 exports.register = async (req, res) => {
   // Get the username, email and password from the request
   const { username, email, password } = req.body;
+  const defaultProfileImage = 'Default_Profile.webp';
   try {
     // Conselt to the db and save in a variable "result"
     const [result] = await pool.query(
-      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [username, email, password]
+      'INSERT INTO users (username, email, password, profileImage) VALUES (?, ?, ?, ?)',
+      [username, email, password, defaultProfileImage]
     );
     res.status(201).json({
       message: 'User registered successfully',
@@ -35,9 +36,18 @@ exports.login = async (req, res) => {
     }
     const user = rows[0];
     // Create a token
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
-      expiresIn: '1h',
-    });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        profileImage: user.profileImage,
+      },
+      SECRET_KEY,
+      {
+        expiresIn: '1h',
+      }
+    );
     res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -62,7 +72,7 @@ exports.addContact = async (req, res) => {
         id: user.id,
         name: user.username,
         message: 'New contact added!',
-        avatar: '/Default_Profile.webp',
+        avatar: 'Default_Profile.webp',
       },
     });
   } catch (error) {
