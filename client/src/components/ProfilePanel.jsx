@@ -27,7 +27,11 @@ const ProfilePanel = ({ onAddContact }) => {
   }, []);
 
   const handleAddClick = () => setShowPopup(true);
-  const closePopup = () => setShowPopup(false);
+
+  const closePopup = () => {
+    setShowPopup(false);
+    setUsername('');
+  };
 
   const handleAddContact = async () => {
     if (!username.trim()) return alert('Username cannot be empty');
@@ -46,6 +50,7 @@ const ProfilePanel = ({ onAddContact }) => {
       const data = await response.json();
       if (response.ok) {
         onAddContact(data.contact); // Pass the contact to the parent component
+        setUsername(''); // Clear the username
         closePopup();
       } else {
         alert(data.error || 'Failed to add contact');

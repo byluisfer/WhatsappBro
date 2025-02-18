@@ -56,35 +56,46 @@ exports.login = async (req, res) => {
 
 exports.addContact = async (req, res) => {
   const { username } = req.body;
-  const token = req.headers.authorization?.split(' ')[1]; // Get the token from the header
+  const token = req.headers['authorization']?.split(' ')[1]; // Get the token from the headers
+
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   try {
-    if (!token) {
-      return res.status(401).json({ error: 'No token provided' });
-    }
-
     const decoded = jwt.verify(token, SECRET_KEY); // Decode the token
+    const userId = decoded.id;
 
-    // Check if the user is trying to add him selfs
-    if (decoded.username === username) {
-      return res.status(400).json({ error: 'You cannt add yourself' });
-    }
-
-    const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [
-      username,
-    ]);
-
-    if (rows.length === 0) {
+    const [contactRows] = await pool.query(
+      'SELECT * FROM users WHERE username = ?',
+      [username]
+    );
+    if (contactRows.length === 0)
       return res.status(404).json({ error: 'User not found' });
-    }
 
-    const user = rows[0];
+    const contactId = contactRows[0].id;
+
+    if (userId === contactId)
+      return res
+        .status(400)
+        .json({ error: 'Cannot add yourself as a contact' });
+
+    const [existing] = await pool.query(
+      'SELECT * FROM contacts WHERE user_id = ? AND contact_id = ?',
+      [userId, contactId]
+    );
+    if (existing.length > 0)
+      return res.status(400).json({ error: 'Contact already added' });
+
+    await pool.query(
+      'INSERT INTO contacts (user_id, contact_id) VALUES (?, ?)',
+      [userId, contactId]
+    );
+
     res.status(200).json({
       contact: {
-        id: user.id,
-        name: user.username,
+        id: contactId,
+        name: contactRows[0].username,
         message: 'New contact added!',
-        avatar: 'Default_Profile.webp',
+        avatar: contactRows[0].profileImage,
       },
     });
   } catch (error) {
