@@ -36,7 +36,10 @@ const ProfilePanel = ({ onAddContact }) => {
         `http://localhost:3000/api/auth/contacts/add`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Add the token
+          },
           body: JSON.stringify({ username }),
         }
       );

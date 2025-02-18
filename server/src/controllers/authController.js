@@ -55,17 +55,29 @@ exports.login = async (req, res) => {
 };
 
 exports.addContact = async (req, res) => {
-  // Get the username from the request
   const { username } = req.body;
+  const token = req.headers.authorization?.split(' ')[1]; // Get the token from the header
+
   try {
-    // Consult to the db and save in a variable "rows"
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, SECRET_KEY); // Decode the token
+
+    // Check if the user is trying to add him selfs
+    if (decoded.username === username) {
+      return res.status(400).json({ error: 'You cannt add yourself' });
+    }
+
     const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [
       username,
     ]);
-    // If the user does not exist, return an error
+
     if (rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
+
     const user = rows[0];
     res.status(200).json({
       contact: {
