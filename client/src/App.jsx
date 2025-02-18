@@ -7,10 +7,12 @@ function App() {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
 
+  // To add a contact
   const handleAddContact = (newContact) => {
     setContacts((prevContacts) => [...prevContacts, newContact]); // Add the new contact to the list
   };
 
+  // To see the chat from the selected contact
   const handleSelectContact = (contact) => {
     setSelectedContact(contact); // Save the selected contact
   };

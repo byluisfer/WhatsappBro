@@ -7,8 +7,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   // Get the token from local storage
   const [token, setToken] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+
+  const navigate = useNavigate(); // Allows to redirect to new pages
+  const location = useLocation(); // Allows to know in wich page is the user
 
   // Check if the token is stored in local storage
   useEffect(() => {
