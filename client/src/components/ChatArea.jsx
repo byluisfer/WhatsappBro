@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000'); // Connect to the server
 
 const ChatArea = () => {
   const [messages, setMessages] = useState([]); // Messages array
   const [input, setInput] = useState(''); // Input text
 
+  // Listen for new messages
+  useEffect(() => {
+    socket.on('receiveMessage', (data) => {
+      setMessages((prev) => [...prev, data]); // Add new message to the array
+    });
+
+    return () => socket.off('receiveMessage'); // Clean up
+  }, []);
+
   // Handle send message
   const handleSend = () => {
-    // Check if the input is not empty
     if (input.trim()) {
-      setMessages([...messages, { text: input, sender: 'Me' }]); // Add the message to the messages array
-      setInput(''); // Clear the input
+      const newMessage = { text: input, sender: 'Me' };
+      socket.emit('sendMessage', newMessage);
+      setInput('');
     }
   };
 
