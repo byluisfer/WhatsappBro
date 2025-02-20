@@ -4,8 +4,8 @@ import ContactList from './components/ContactList';
 import ChatArea from './components/ChatArea';
 
 function App() {
-  const [contacts, setContacts] = useState([]);
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [contacts, setContacts] = useState([]); // Save the contacts and start with an empty array
+  const [selectedContact, setSelectedContact] = useState(null); // Save the selected contact
 
   // To add a contact
   const handleAddContact = (newContact) => {

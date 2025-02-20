@@ -1,13 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputField from '../components/InputField';
-import { apiRequest } from '../services/api';
 
 const Register = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the form from submitting
 
     // Get the data from the inputs
     const formData = {
@@ -15,17 +14,26 @@ const Register = () => {
       email: e.target.email.value,
       password: e.target.password.value,
     };
+
     try {
-      // Send the data to the backend
-      const data = await apiRequest('/register', 'POST', formData);
-      if (data.error) {
-        alert(data.error);
+      // Send the data to the backend and get the response
+      const response = await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Registration failed');
       } else {
         alert('User registered successfully!');
         navigate('/login');
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error during registration:', error);
+      alert('An error occurred while registering');
     }
   };
 

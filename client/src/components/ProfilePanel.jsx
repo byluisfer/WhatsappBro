@@ -11,9 +11,11 @@ const ProfilePanel = ({ onAddContact }) => {
     email: '',
     profilePic: 'Default_Profile.webp', // Default profile image
   });
-  const [showPopup, setShowPopup] = useState(false);
-  const [username, setUsername] = useState('');
 
+  const [showPopup, setShowPopup] = useState(false); // Show the popup to add a new contact (start with false)
+  const [username, setUsername] = useState(''); // Save the username to add (start empty)
+
+  // UseEffect to get the user info from the token
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -26,8 +28,10 @@ const ProfilePanel = ({ onAddContact }) => {
     }
   }, []);
 
+  // Show the popup to add a new contact
   const handleAddClick = () => setShowPopup(true);
 
+  // Close the popup
   const closePopup = () => {
     setShowPopup(false);
     setUsername('');
@@ -35,6 +39,7 @@ const ProfilePanel = ({ onAddContact }) => {
 
   const handleAddContact = async () => {
     if (!username.trim()) return alert('Username cannot be empty');
+
     try {
       const response = await fetch(
         `http://localhost:3000/api/auth/contacts/add`,
@@ -48,6 +53,7 @@ const ProfilePanel = ({ onAddContact }) => {
         }
       );
       const data = await response.json();
+
       if (response.ok) {
         onAddContact(data.contact); // Pass the contact to the parent component
         setUsername(''); // Clear the username

@@ -32,4 +32,4 @@ INSERT INTO users (username, email, password, profileImage) VALUES
 ('Pessi', 'augi@gmail.com', '123', 'Default_Profile.webp');
 
 -- Confirmation message
-SELECT '✅ DB and Tables right created' AS status;
+SELECT 'DB and Tables right created' AS status;

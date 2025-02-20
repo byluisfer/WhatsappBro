@@ -4,19 +4,19 @@ import { io } from 'socket.io-client';
 const socket = io('http://localhost:3000'); // Connect to the server
 
 const ChatArea = () => {
-  const [messages, setMessages] = useState([]); // Messages array
-  const [input, setInput] = useState(''); // Input text
+  const [messages, setMessages] = useState([]); // Save the messages and update when a new message is received (start empty)
+  const [input, setInput] = useState(''); // Save the input text and update when the user types (start empty)
 
   // Listen for new messages
   useEffect(() => {
     socket.on('receiveMessage', (data) => {
-      setMessages((prev) => [...prev, data]); // Add new message to the array
+      setMessages((prevMessages) => [...prevMessages, data]); // Add new message to the array
     });
 
     return () => socket.off('receiveMessage'); // Clean up
   }, []);
 
-  // Handle send message
+  // To send message
   const handleSend = () => {
     if (input.trim()) {
       const newMessage = { text: input, sender: 'Me' };
