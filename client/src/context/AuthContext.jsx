@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Create the context
 const AuthContext = createContext();
@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   const navigate = useNavigate(); // Allows to redirect to new pages
-  const location = useLocation(); // Allows to know in wich page is the user
 
   // Check if the token is stored in local storage to go login
   useEffect(() => {
