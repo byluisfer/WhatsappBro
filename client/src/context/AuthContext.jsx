@@ -16,14 +16,11 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem('token');
     // If the token is not stored in local storage, redirect to the login page
     if (!storedToken) {
-      if (location.pathname !== '/login') {
-        navigate('/register');
-      }
       navigate('/register');
     } else {
       setToken(storedToken);
     }
-  }, [location.pathname]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, setToken }}>
