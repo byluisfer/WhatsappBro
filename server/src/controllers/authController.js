@@ -123,3 +123,42 @@ exports.getContacts = async (req, res) => {
       .json({ error: "Error fetching contacts: " + error.message });
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "No token provided" });
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const userId = decoded.id;
+
+    let { username, profilePic } = req.body;
+
+    if (!username || username.trim() === "") {
+      const [user] = await pool.query(
+        "SELECT username FROM users WHERE id = ?",
+        [userId]
+      );
+      username = user[0].username;
+    }
+
+    let query = "UPDATE users SET username = ? WHERE id = ?";
+    let params = [username, userId];
+
+    if (profilePic) {
+      query = "UPDATE users SET username = ?, profileImage = ? WHERE id = ?";
+      params = [username, profilePic, userId];
+    }
+
+    await pool.query(query, params);
+
+    res
+      .status(200)
+      .json({
+        message: "Profile updated successfully",
+        profileImage: profilePic,
+      });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating profile: " + error.message });
+  }
+};

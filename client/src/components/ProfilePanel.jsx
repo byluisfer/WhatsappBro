@@ -4,7 +4,7 @@ import PlusIcon from '/Add_Contact.svg';
 import SettingsIcon from '/Settings.svg';
 import { jwtDecode } from 'jwt-decode';
 
-const ProfilePanel = ({ onAddContact }) => {
+const ProfilePanel = ({ onAddContact, setShowSettings }) => {
   // Set the initial state of the user
   const [user, setUser] = useState({
     username: '',
@@ -77,7 +77,11 @@ const ProfilePanel = ({ onAddContact }) => {
     <>
       <div className="fixed top-4 left-4 bg-white/20 backdrop-blur-xl rounded-full p-4 flex items-center space-x-4 shadow-lg border border-white/20 min-w-md">
         <img
-          src={`/${user.profilePic}`} // Use the profilePic prop from the user object
+          src={
+            user.profilePic.startsWith('data:image')
+              ? user.profilePic
+              : `/${user.profilePic}`
+          }
           alt="Profile"
           className="w-16 h-16 rounded-full object-cover"
         />
@@ -98,6 +102,7 @@ const ProfilePanel = ({ onAddContact }) => {
             src={SettingsIcon}
             alt="Settings"
             className="w-6 h-6 cursor-pointer"
+            onClick={() => setShowSettings(true)} // Activate SettingsPanel
           />
         </div>
       </div>

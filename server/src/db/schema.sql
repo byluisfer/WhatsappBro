@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
-    profileImage VARCHAR(255) DEFAULT 'Default_Profile.webp'
+    profileImage LONGTEXT DEFAULT NULL
 );
 
 -- Create a contacts table
@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS messages (
 
 -- Insert test users
 INSERT INTO users (username, email, password, profileImage) VALUES
-('Ibai', 'noah@gmail.com', '123', 'Default_Profile.webp'),
-('Pessi', 'augi@gmail.com', '123', 'Default_Profile.webp');
+('Ibai', 'noah@gmail.com', '123', NULL),
+('Pessi', 'augi@gmail.com', '123', NULL);
 
 -- Confirmation message
 SELECT 'DB and Tables right created' AS status;

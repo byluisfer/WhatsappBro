@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import ProfilePanel from './components/ProfilePanel';
 import ContactList from './components/ContactList';
 import ChatArea from './components/ChatArea';
+import SettingsPanel from './components/SettingsPanel';
 
 function App() {
   const [contacts, setContacts] = useState([]); // Save the contacts and start with an empty array
   const [selectedContact, setSelectedContact] = useState(null); // Save the selected contact
+  const [showSettings, setShowSettings] = useState(false); // Show the settings panel
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -46,19 +48,29 @@ function App() {
 
   // To see the chat from the selected contact
   const handleSelectContact = (contact) => {
-    setSelectedContact(contact); // Save the selected contact
+    setSelectedContact(contact); // Set the selected contact
+    setShowSettings(false); // Close the settings panel
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-teal-900 to-gray-900 flex">
       <div className="w-2/6">
-        <ProfilePanel onAddContact={handleAddContact} />
+        <ProfilePanel
+          onAddContact={handleAddContact}
+          setShowSettings={setShowSettings}
+        />
         <ContactList
           contacts={contacts}
           onSelectContact={handleSelectContact}
         />
       </div>
-      <div className="flex-1 p-4">{selectedContact && <ChatArea />}</div>
+      <div className="flex-1 p-4">
+        {showSettings ? (
+          <SettingsPanel setShowSettings={setShowSettings} />
+        ) : (
+          selectedContact && <ChatArea />
+        )}
+      </div>
     </div>
   );
 }
