@@ -7,11 +7,11 @@ const ContactList = ({ contacts, onSelectContact }) => {
         <div
           key={contact.id}
           className="flex items-center p-4 mb-2 cursor-pointer"
-          onClick={() => onSelectContact(contact)} // When the contact is clicked, call the function to select the contact
+          onClick={() => onSelectContact(contact)}
         >
           <div className="flex items-center justify-center text-xl font-bold rounded-full">
             <img
-              src={contact.avatar}
+              src={`/${contact.avatar}`}
               alt={contact.name}
               className="w-16 h-16 rounded-full object-cover"
             />

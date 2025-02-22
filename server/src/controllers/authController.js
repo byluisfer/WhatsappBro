@@ -98,3 +98,28 @@ exports.addContact = async (req, res) => {
     res.status(500).json({ error: "Error adding contact: " + error.message });
   }
 };
+
+exports.getContacts = async (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1]; // Get the token
+
+  if (!token) return res.status(401).json({ error: "No token provided" });
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const userId = decoded.id; // ID of the user
+
+    const [contacts] = await pool.query(
+      `SELECT users.id, users.username, users.email, users.profileImage 
+      FROM contacts JOIN users 
+      ON contacts.contact_id = users.id 
+      WHERE contacts.user_id = ?;`,
+      [userId]
+    );
+
+    res.status(200).json({ contacts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error fetching contacts: " + error.message });
+  }
+};

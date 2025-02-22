@@ -47,7 +47,7 @@ const ProfilePanel = ({ onAddContact }) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Add the token
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
           body: JSON.stringify({ username }),
         }
@@ -55,8 +55,14 @@ const ProfilePanel = ({ onAddContact }) => {
       const data = await response.json();
 
       if (response.ok) {
-        onAddContact(data.contact); // Pass the contact to the parent component
-        setUsername(''); // Clear the username
+        const formattedContact = {
+          id: data.contact.id,
+          name: data.contact.name,
+          avatar: data.contact.avatar || 'Default_Profile.webp', //  Default image
+          message: 'New contact added!', //  Default message
+        };
+
+        onAddContact(formattedContact);
         closePopup();
       } else {
         alert(data.error || 'Failed to add contact');
