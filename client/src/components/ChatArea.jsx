@@ -1,42 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3000'); // Connect to the server
+const socket = io('http://localhost:3000');
 
-const ChatArea = () => {
-  const [messages, setMessages] = useState([]); // Save the messages and update when a new message is received (start empty)
-  const [input, setInput] = useState(''); // Save the input text and update when the user types (start empty)
-  const [userId, setUserId] = useState(null); // Save the userId and update when the token is decoded
+const ChatArea = ({ selectedContact, userId }) => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      setUserId(decodedToken.id);
-    }
+    if (!selectedContact) return; // If no contact is selected, don't fetch messages.
 
-    fetch('http://localhost:3000/api/messages/all')
-      .then((res) => res.json())
-      .then((data) => setMessages(data.messages));
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/messages/conversation?senderId=${userId}&receiverId=${selectedContact.id}`
+        );
+        const data = await response.json();
+
+        // Convert sender_id to senderID to match the prop type
+        const formattedMessages = data.messages.map((msg) => ({
+          id: msg.id,
+          senderId: msg.sender_id, //  Convert sender_id to senderID
+          receiverId: msg.receiver_id,
+          text: msg.text,
+          timestamp: msg.timestamp,
+        }));
+
+        setMessages(formattedMessages); // Save only the messages from this conversation
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    fetchMessages();
 
     socket.on('receiveMessage', (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+      if (
+        (data.senderId === userId && data.receiverId === selectedContact.id) ||
+        (data.senderId === selectedContact.id && data.receiverId === userId)
+      ) {
+        setMessages((prevMessages) => [...prevMessages, data]);
+      }
     });
 
     return () => {
       socket.off('receiveMessage');
     };
-  }, []);
+  }, [selectedContact, userId]);
 
   const handleSend = () => {
+    if (!selectedContact || !userId) {
+      console.error('No contact selected or userId is missing.');
+      return;
+    }
+
     if (input.trim()) {
-      const newMessage = { text: input, senderId: userId };
+      const newMessage = {
+        senderId: userId,
+        receiverId: selectedContact.id,
+        text: input,
+      };
+
       socket.emit('sendMessage', newMessage);
+
       fetch('http://localhost:3000/api/messages/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMessage),
       });
+
       setInput('');
     }
   };

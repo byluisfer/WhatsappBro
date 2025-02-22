@@ -78,9 +78,9 @@ const ProfilePanel = ({ onAddContact, setShowSettings }) => {
       <div className="fixed top-4 left-4 bg-white/20 backdrop-blur-xl rounded-full p-4 flex items-center space-x-4 shadow-lg border border-white/20 min-w-md">
         <img
           src={
-            user.profilePic.startsWith('data:image')
+            user.profilePic?.startsWith('data:image')
               ? user.profilePic
-              : `/${user.profilePic}`
+              : `/${user.profilePic || 'Default_Profile.webp'}`
           }
           alt="Profile"
           className="w-16 h-16 rounded-full object-cover"

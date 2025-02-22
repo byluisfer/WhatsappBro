@@ -30,15 +30,18 @@ CREATE TABLE IF NOT EXISTS contacts (
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
     text TEXT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(id)
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
 );
 
 -- Insert test users
 INSERT INTO users (username, email, password, profileImage) VALUES
 ('Ibai', 'noah@gmail.com', '123', NULL),
-('Pessi', 'augi@gmail.com', '123', NULL);
+('Pessi', 'augi@gmail.com', '123', NULL),
+('Luis', 'luis@gmail.com', '123', NULL);
 
 -- Confirmation message
 SELECT 'DB and Tables right created' AS status;
