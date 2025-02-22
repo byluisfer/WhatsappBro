@@ -26,6 +26,15 @@ CREATE TABLE IF NOT EXISTS contacts (
     FOREIGN KEY (contact_id) REFERENCES users(id)
 );
 
+-- Create a messages table
+CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    text TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id)
+);
+
 -- Insert test users
 INSERT INTO users (username, email, password, profileImage) VALUES
 ('Ibai', 'noah@gmail.com', '123', 'Default_Profile.webp'),

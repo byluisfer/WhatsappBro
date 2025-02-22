@@ -3,6 +3,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const messageRoutes = require("./routes/messageRoutes");
 
 const app = express();
 const PORT = 3000;
@@ -21,19 +22,23 @@ app.use(express.json());
 
 app.get("/ping", (req, res) => res.send("<h1>Pong</h1>"));
 app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
 
 // https://socket.io/docs/v4/server-initialization/
 io.on("connection", (socket) => {
-  console.log("Usur conected:", socket.id);
+  console.log("User connected:", socket.id);
 
-  // Message events from the client
-  socket.on("sendMessage", (data) => {
-    console.log("Message recived:", data);
-    io.emit("receiveMessage", data); // Send message to all
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconected:", socket.id);
+  socket.on("sendMessage", async (data) => {
+    console.log("Message received:", data);
+    io.emit("receiveMessage", data);
+    try {
+      await pool.query("INSERT INTO messages (sender_id, text) VALUES (?, ?)", [
+        data.senderId,
+        data.text,
+      ]);
+    } catch (error) {
+      console.error("Database error:", error);
+    }
   });
 });
 

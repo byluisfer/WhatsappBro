@@ -6,7 +6,7 @@ const socket = io('http://localhost:3000'); // Connect to the server
 const ChatArea = () => {
   const [messages, setMessages] = useState([]); // Save the messages and update when a new message is received (start empty)
   const [input, setInput] = useState(''); // Save the input text and update when the user types (start empty)
-  const [userId, setUserId] = useState(null); // Save the userId and update when the token is decoded (start null)
+  const [userId, setUserId] = useState(null); // Save the userId and update when the token is decoded
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -15,42 +15,42 @@ const ChatArea = () => {
       setUserId(decodedToken.id);
     }
 
-    // Listener to receive messages from the server
+    fetch('http://localhost:3000/api/messages/all')
+      .then((res) => res.json())
+      .then((data) => setMessages(data.messages));
+
     socket.on('receiveMessage', (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     return () => {
-      socket.off('receiveMessage'); //  When the component unmounts, remove the listener
+      socket.off('receiveMessage');
     };
   }, []);
 
   const handleSend = () => {
     if (input.trim()) {
-      const newMessage = {
-        text: input,
-        senderId: userId,
-      };
-
+      const newMessage = { text: input, senderId: userId };
       socket.emit('sendMessage', newMessage);
+      fetch('http://localhost:3000/api/messages/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMessage),
+      });
       setInput('');
     }
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-30px)] p-4 bg-white/15 backdrop-blur-3xl rounded-3xl shadow-lg border border-white/20">
+    <div className="flex flex-col h-full p-4 bg-white/15 rounded-3xl shadow-lg border border-white/20">
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex ${
-              msg.senderId === userId ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex ${msg.senderId === userId ? 'justify-end' : 'justify-start'}`}
           >
             <span
-              className={`p-3 rounded-xl shadow-md text-white max-w-xs ${
-                msg.senderId === userId ? 'bg-teal-600' : 'bg-gray-600'
-              }`}
+              className={`p-3 rounded-xl text-white max-w-xs ${msg.senderId === userId ? 'bg-teal-600' : 'bg-gray-600'}`}
             >
               {msg.text}
             </span>
