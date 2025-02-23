@@ -130,7 +130,7 @@ exports.updateProfile = async (req, res) => {
     const decoded = jwt.verify(token, SECRET_KEY);
     const userId = decoded.id;
 
-    let { username, profilePic } = req.body;
+    let { username } = req.body;
 
     if (!username || username.trim() === "") {
       const [user] = await pool.query(
@@ -143,16 +143,10 @@ exports.updateProfile = async (req, res) => {
     let query = "UPDATE users SET username = ? WHERE id = ?";
     let params = [username, userId];
 
-    if (profilePic) {
-      query = "UPDATE users SET username = ?, profileImage = ? WHERE id = ?";
-      params = [username, profilePic, userId];
-    }
-
     await pool.query(query, params);
 
     res.status(200).json({
       message: "Profile updated successfully",
-      profileImage: profilePic,
     });
   } catch (error) {
     res.status(500).json({ error: "Error updating profile: " + error.message });

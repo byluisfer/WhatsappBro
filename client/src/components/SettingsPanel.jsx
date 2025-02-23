@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
-const SettingsPanel = ({ setShowSettings }) => {
+const SettingsPanel = ({ setShowSettings, setUser }) => {
   const [username, setUsername] = useState(''); // Save the username to update
-  const [profilePic, setProfilePic] = useState(null); // Save the profilePic to update
 
   const handleSave = async () => {
     const storedToken = localStorage.getItem('token');
@@ -21,19 +20,7 @@ const SettingsPanel = ({ setShowSettings }) => {
       return;
     }
 
-    let profilePicBase64 = null; // Save the base64 of the profilePic
-    // When there is a profilePic, we convert it to base64
-    if (profilePic) {
-      const reader = new FileReader();
-      reader.readAsDataURL(profilePic);
-      reader.onloadend = async () => {
-        profilePicBase64 = reader.result; // Convert the profilePic to base64
-        sendProfileUpdate(finalUsername, profilePicBase64);
-      };
-      return;
-    }
-
-    sendProfileUpdate(finalUsername, profilePicBase64); // Send the update
+    sendProfileUpdate(finalUsername); // Send the update
   };
 
   // Send the profile update
@@ -47,7 +34,7 @@ const SettingsPanel = ({ setShowSettings }) => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-          body: JSON.stringify({ username, profilePic }), // Send the username and profilePic
+          body: JSON.stringify({ username, profilePic }),
         }
       );
 
@@ -55,6 +42,10 @@ const SettingsPanel = ({ setShowSettings }) => {
 
       if (response.ok) {
         alert('Profile updated successfully!');
+        setUser((prevUser) => ({
+          ...prevUser,
+          username, // Update the username
+        }));
         setShowSettings(false);
       } else {
         alert(data.error || 'Failed to update profile');
@@ -74,13 +65,6 @@ const SettingsPanel = ({ setShowSettings }) => {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         className="w-full p-2 mb-4 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-      />
-
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setProfilePic(e.target.files[0])}
-        className="w-full p-2 mb-4 border-gray-500 text-gray-500 border rounded-lg"
       />
 
       <div className="flex justify-between">

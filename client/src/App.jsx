@@ -6,6 +6,11 @@ import SettingsPanel from './components/SettingsPanel';
 import { jwtDecode } from 'jwt-decode';
 
 function App() {
+  const [user, setUser] = useState({
+    username: '',
+    email: '',
+    profilePic: 'Default_Profile.webp',
+  });
   const [contacts, setContacts] = useState([]); // Save the contacts and start with an empty array
   const [selectedContact, setSelectedContact] = useState(null); // Save the selected contact
   const [showSettings, setShowSettings] = useState(false); // Show the settings panel
@@ -17,7 +22,11 @@ function App() {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUserId(decoded.id);
+        setUser({
+          username: decoded.username,
+          email: decoded.email,
+          profilePic: decoded.profileImage,
+        });
       } catch (error) {
         console.error('Error decoding token:', error);
         localStorage.removeItem('token');
@@ -70,6 +79,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-r from-teal-900 to-gray-900 flex">
       <div className="w-2/6">
         <ProfilePanel
+          user={user}
           onAddContact={handleAddContact}
           setShowSettings={setShowSettings}
         />
@@ -80,7 +90,7 @@ function App() {
       </div>
       <div className="flex-1 p-4">
         {showSettings ? (
-          <SettingsPanel setShowSettings={setShowSettings} />
+          <SettingsPanel setShowSettings={setShowSettings} setUser={setUser} />
         ) : selectedContact && userId ? (
           <ChatArea selectedContact={selectedContact} userId={userId} />
         ) : null}

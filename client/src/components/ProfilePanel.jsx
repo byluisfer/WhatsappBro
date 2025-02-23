@@ -4,29 +4,9 @@ import PlusIcon from '/Add_Contact.svg';
 import SettingsIcon from '/Settings.svg';
 import { jwtDecode } from 'jwt-decode';
 
-const ProfilePanel = ({ onAddContact, setShowSettings }) => {
-  // Set the initial state of the user
-  const [user, setUser] = useState({
-    username: '',
-    email: '',
-    profilePic: 'Default_Profile.webp', // Default profile image
-  });
-
+const ProfilePanel = ({ user, onAddContact, setShowSettings }) => {
   const [showPopup, setShowPopup] = useState(false); // Show the popup to add a new contact (start with false)
   const [username, setUsername] = useState(''); // Save the username to add (start empty)
-
-  // UseEffect to get the user info from the token
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decoded = jwtDecode(token); // Decode the token
-      setUser({
-        username: decoded.username,
-        email: decoded.email,
-        profilePic: decoded.profileImage,
-      });
-    }
-  }, []);
 
   // Show the popup to add a new contact
   const handleAddClick = () => setShowPopup(true);
@@ -96,13 +76,13 @@ const ProfilePanel = ({ onAddContact, setShowSettings }) => {
             src={PlusIcon}
             alt="Add"
             className="w-6 h-6 cursor-pointer"
-            onClick={handleAddClick}
+            onClick={() => setShowPopup(true)}
           />
           <img
             src={SettingsIcon}
             alt="Settings"
             className="w-6 h-6 cursor-pointer"
-            onClick={() => setShowSettings(true)} // Activate SettingsPanel
+            onClick={() => setShowSettings(true)}
           />
         </div>
       </div>
