@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
-    profileImage LONGTEXT DEFAULT NULL
+    profileImage LONGTEXT DEFAULT NULL,
+    is_online BOOLEAN DEFAULT FALSE
 );
 
 -- Create a contacts table

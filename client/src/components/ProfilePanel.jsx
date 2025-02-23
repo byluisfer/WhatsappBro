@@ -58,8 +58,8 @@ const ProfilePanel = ({ onAddContact, setShowSettings }) => {
         const formattedContact = {
           id: data.contact.id,
           name: data.contact.name,
-          avatar: data.contact.avatar || 'Default_Profile.webp', //  Default image
-          message: 'New contact added!', //  Default message
+          avatar: data.contact.avatar || 'Default_Profile.webp',
+          message: data.contact.message, // 🔹 Ahora usa el estado correcto
         };
 
         onAddContact(formattedContact);

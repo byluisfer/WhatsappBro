@@ -55,19 +55,17 @@ exports.login = async (req, res) => {
 };
 
 exports.addContact = async (req, res) => {
-  // Get the username from the request
   const { username } = req.body;
-  const token = req.headers["authorization"]?.split(" ")[1]; // Get the token from the headers
+  const token = req.headers["authorization"]?.split(" ")[1];
 
   if (!token) return res.status(401).json({ error: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY); // Decode the token
-    const userId = decoded.id; // Get the userId from the decoded token
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const userId = decoded.id;
 
-    // Get the userId from the username
     const [contactRows] = await pool.query(
-      "SELECT * FROM users WHERE username = ?",
+      "SELECT id, username, profileImage, is_online FROM users WHERE username = ?",
       [username]
     );
 
@@ -90,8 +88,8 @@ exports.addContact = async (req, res) => {
       contact: {
         id: contactId,
         name: contactRows[0].username,
-        message: "New contact added!",
         avatar: contactRows[0].profileImage,
+        message: contactRows[0].is_online ? "🟢 Online" : "⚪ Offline",
       },
     });
   } catch (error) {
@@ -100,16 +98,16 @@ exports.addContact = async (req, res) => {
 };
 
 exports.getContacts = async (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1]; // Get the token
+  const token = req.headers["authorization"]?.split(" ")[1]; // Obtener el token
 
   if (!token) return res.status(401).json({ error: "No token provided" });
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    const userId = decoded.id; // ID of the user
+    const userId = decoded.id; // ID del usuario
 
     const [contacts] = await pool.query(
-      `SELECT users.id, users.username, users.email, users.profileImage 
+      `SELECT users.id, users.username, users.email, users.profileImage, users.is_online 
       FROM contacts JOIN users 
       ON contacts.contact_id = users.id 
       WHERE contacts.user_id = ?;`,
@@ -152,13 +150,40 @@ exports.updateProfile = async (req, res) => {
 
     await pool.query(query, params);
 
-    res
-      .status(200)
-      .json({
-        message: "Profile updated successfully",
-        profileImage: profilePic,
-      });
+    res.status(200).json({
+      message: "Profile updated successfully",
+      profileImage: profilePic,
+    });
   } catch (error) {
     res.status(500).json({ error: "Error updating profile: " + error.message });
+  }
+};
+
+exports.setOnlineStatus = async (req, res) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "The body is empty" });
+  }
+
+  const { userId, is_online } = req.body;
+
+  if (userId === undefined || is_online === undefined) {
+    return res.status(400).json({ error: "Missing userId or is_online field" });
+  }
+
+  try {
+    const [result] = await pool.query(
+      "UPDATE users SET is_online = ? WHERE id = ?",
+      [is_online ? 1 : 0, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({
+      message: `User ${userId} is now ${is_online ? "online" : "offline"}`,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

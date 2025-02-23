@@ -13,13 +13,17 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
 
-    try {
-      const decoded = jwtDecode(token);
-      setUserId(decoded.id); // Save the userId
-    } catch (error) {
-      console.error('Error decoding token:', error);
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setUserId(decoded.id);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        localStorage.removeItem('token');
+      }
+    } else {
+      setUserId(null);
     }
 
     const fetchContacts = async () => {
@@ -27,9 +31,10 @@ function App() {
         const response = await fetch(
           'http://localhost:3000/api/auth/contacts',
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
           }
         );
+
         const data = await response.json();
         if (response.ok) {
           setContacts(
@@ -37,7 +42,7 @@ function App() {
               id: contact.id,
               name: contact.username,
               avatar: contact.profileImage || 'Default_Profile.webp',
-              message: 'New contact added!',
+              isOnline: contact.is_online,
             }))
           );
         } else {
@@ -58,7 +63,6 @@ function App() {
 
   // To see the chat from the selected contact
   const handleSelectContact = (contact) => {
-    alert(`Abierto chat con ${contact.name}`); // Show a message to the user
     setSelectedContact(contact); // Save the selected contact
   };
 
