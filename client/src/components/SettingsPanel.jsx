@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
 const SettingsPanel = ({ setShowSettings, setUser }) => {
   const [username, setUsername] = useState(''); // Save the username to update
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handleSave = async () => {
     const storedToken = localStorage.getItem('token');
@@ -72,6 +74,12 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    enqueueSnackbar('Logged out successfully!', { variant: 'info' });
+    navigate('/login');
+  };
+
   return (
     <div className="h-full p-6 bg-white/15 backdrop-blur-3xl rounded-3xl shadow-lg border border-white/20">
       <h2 className="text-2xl text-white font-semibold mb-4">Settings</h2>
@@ -84,18 +92,24 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
         className="w-full p-2 mb-4 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
       />
 
-      <div className="flex justify-between">
+      <div className="flex justify-between w-full mt-4">
         <button
           onClick={() => setShowSettings(false)}
-          className="px-4 py-2 bg-gray-500 text-white rounded-xl cursor-pointer hover:bg-gray-600"
+          className="px-6 py-2 bg-gray-500 text-white rounded-xl cursor-pointer hover:bg-gray-600 flex-1 mx-2"
         >
           Back
         </button>
         <button
           onClick={handleSave}
-          className="px-4 py-2 bg-teal-600 text-white rounded-xl cursor-pointer hover:bg-teal-700"
+          className="px-6 py-2 bg-teal-600 text-white rounded-xl cursor-pointer hover:bg-teal-700 flex-1 mx-2"
         >
           Save
+        </button>
+        <button
+          onClick={handleLogout}
+          className="px-6 py-2 bg-red-600 text-white rounded-xl cursor-pointer hover:bg-red-700 flex-1 mx-2"
+        >
+          Log Out
         </button>
       </div>
     </div>

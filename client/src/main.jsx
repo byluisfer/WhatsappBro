@@ -5,7 +5,7 @@ import App from './App.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import { AuthProvider } from './context/AuthContext';
-import { SnackbarProvider } from 'notistack'; // ✅ Importar `notistack`
+import { SnackbarProvider } from 'notistack';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
