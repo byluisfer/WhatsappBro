@@ -1,8 +1,57 @@
-# React + Vite
+# WhatsappBro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Real time chat app, better than whatsapp.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Bonuspunkte
+
+- **Direktnachrichten**
+
+---
+
+## Prerequisites
+
+- Docker
+- Node >= 20.x
+
+---
+
+## Technologies
+
+- **Frontend**: React, TailwindCSS
+- **Backend**: Node.js, Express.js, Socket.io
+- **Database**: MySQL, PhpMyAdmin
+
+---
+
+## Installation
+
+### 1️⃣ **Clone the repository**
+
+```sh
+ git clone https://github.com/byluisfer/WhatsappBro.git
+ cd WhatsappBro
+```
+
+### 2️⃣ **Run Docker**
+
+```sh
+ docker compose up -d
+```
+
+---
+
+## Access
+
+- Frontend: http://localhost:5173/
+- Backend: http://localhost:3000/
+- Database (PhpMyAdmin): http://localhost:8080/ (Username: Admin | Password: 123)
+
+### Test users
+
+1️⃣ Username: user1 | Password: 123456
+2️⃣ Username: user2 | Password: 123456
+3️⃣ Username: user3 | Password: 123456
+
+---
