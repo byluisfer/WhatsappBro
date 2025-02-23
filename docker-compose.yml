@@ -11,7 +11,7 @@ services:
       - whatsappbro_mariadb_data:/var/lib/mysql
       - ./server/src/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql # Run the script "schema.sql" for first time to create all
     ports:
-      - '3306:3306' # Default MariaDB port
+      - "3306:3306" # Default MariaDB port
     restart: always # Always restart when the service stop, becouse we allways need the DB
 
   phpmyadmin:
@@ -22,15 +22,13 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: 123
     ports:
-      - '8080:80'
+      - "8080:80"
     depends_on:
       - database
 
   server:
+    image: byluisfer/server:latest
     container_name: whatsappbro-server
-    build:
-      context: .
-      dockerfile: ./server/Dockerfile
     environment:
       NODE_ENV: development
       DB_HOST: database
@@ -38,17 +36,15 @@ services:
       DB_PASSWORD: 123
       DB_NAME: WhatsappBro
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       - database
 
   client:
+    image: byluisfer/client:latest
     container_name: whatsappbro-client
-    build:
-      context: .
-      dockerfile: ./client/Dockerfile
     ports:
-      - '5173:5173'
+      - "5173:5173"
     depends_on:
       - server
 
