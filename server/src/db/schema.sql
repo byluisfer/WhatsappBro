@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS messages (
 
 -- Insert test users
 INSERT INTO users (username, email, password, profileImage) VALUES
-('Ibai', 'noah@gmail.com', '$2b$10$iSqYAimPjyC0aachVPxQQ.S6LO0zNQJ50KcegFrksJSqReSOZi0Le', NULL),
-('Pessi', 'augi@gmail.com', '$2b$10$iSqYAimPjyC0aachVPxQQ.S6LO0zNQJ50KcegFrksJSqReSOZi0Le', NULL),
-('Luis', 'luis@gmail.com', '$2b$10$iSqYAimPjyC0aachVPxQQ.S6LO0zNQJ50KcegFrksJSqReSOZi0Le', NULL);
+('User1', 'user1@gmail.com', '$2b$10$iSqYAimPjyC0aachVPxQQ.S6LO0zNQJ50KcegFrksJSqReSOZi0Le', NULL),
+('User2', 'user2@gmail.com', '$2b$10$iSqYAimPjyC0aachVPxQQ.S6LO0zNQJ50KcegFrksJSqReSOZi0Le', NULL),
+('User3', 'user3@gmail.com', '$2b$10$iSqYAimPjyC0aachVPxQQ.S6LO0zNQJ50KcegFrksJSqReSOZi0Le', NULL);
 
 -- Confirmation message
 SELECT 'DB and Tables right created' AS status;
