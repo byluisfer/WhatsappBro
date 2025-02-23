@@ -96,7 +96,7 @@ const ChatArea = ({ selectedContact, userId }) => {
             className={`flex flex-col ${msg.senderId === userId ? 'items-end' : 'items-start'}`}
           >
             <span
-              className={`p-3 rounded-xl text-white max-w-xs ${
+              className={`p-3 rounded-xl text-white max-w-xs break-all overflow-wrap anywhere ${
                 msg.senderId === userId ? 'bg-teal-600' : 'bg-gray-600'
               }`}
             >
