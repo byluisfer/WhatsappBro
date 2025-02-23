@@ -1,29 +1,21 @@
-# WhatsappBro
-
-Real time chat app, better than whatsapp.
-
----
-
-## Bonuspunkte
+# Bonuspunkte
 
 - **Direktnachrichten**
 
----
+# WhatsappBro
+
+- Real time chat app, better than whatsapp.
 
 ## Prerequisites
 
 - Docker
 - Node >= 20.x
 
----
-
 ## Technologies
 
 - **Frontend**: React, TailwindCSS
 - **Backend**: Node.js, Express.js, Socket.io
 - **Database**: MySQL, PhpMyAdmin
-
----
 
 ## Installation
 
@@ -40,8 +32,6 @@ Real time chat app, better than whatsapp.
  docker compose up -d
 ```
 
----
-
 ## Access
 
 - Frontend: http://localhost:5173/
@@ -50,8 +40,6 @@ Real time chat app, better than whatsapp.
 
 ### Test users
 
-1️⃣ Username: user1 | Password: 123456
-2️⃣ Username: user2 | Password: 123456
-3️⃣ Username: user3 | Password: 123456
-
----
+- 1️⃣ Username: user1 | Password: 123456
+- 2️⃣ Username: user2 | Password: 123456
+- 3️⃣ Username: user3 | Password: 123456
