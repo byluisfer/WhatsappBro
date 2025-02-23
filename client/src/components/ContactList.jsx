@@ -1,6 +1,10 @@
 import React from 'react';
 
 const ContactList = ({ contacts, userId, onSelectContact }) => {
+  if (contacts.length === 0) {
+    return null; // 🔹 No renderiza nada si no hay contactos
+  }
+
   return (
     <div className="fixed top-36 left-5 p-2 min-w-md bg-white/20 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20">
       {contacts.map((contact) => (
@@ -19,7 +23,7 @@ const ContactList = ({ contacts, userId, onSelectContact }) => {
           <div className="ml-4 flex-1">
             <h3 className="text-white font-bold text-lg">{contact.name}</h3>
             <p className="text-gray-300 text-sm">
-              {userId ? '🟢 Online' : '⚪ Offline'}
+              {contact.isOnline ? '🟢 Online' : '⚪ Offline'}
             </p>
           </div>
         </div>
