@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputField from '../components/InputField';
+import { useSnackbar } from 'notistack';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the form from submitting
@@ -25,15 +27,19 @@ const Login = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || 'Login failed');
+        enqueueSnackbar('Login failed', { variant: 'error' });
       } else {
         localStorage.setItem('token', data.token); // Save the token in local storage (for future use)
-        alert('Login successful!');
-        navigate('/');
+        enqueueSnackbar('Login successful!', { variant: 'success' });
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
       }
     } catch (error) {
       console.error('Error during login:', error);
-      alert('An error occurred while logging in');
+      enqueueSnackbar('An error occurred while logging in', {
+        variant: 'warning',
+      });
     }
   };
 

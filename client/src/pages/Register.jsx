@@ -1,29 +1,28 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputField from '../components/InputField';
+import { useSnackbar } from 'notistack';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the form from submitting
+    e.preventDefault();
 
-    // Get the data from the inputs
     const formData = {
       username: e.target.username.value,
       email: e.target.email.value,
       password: e.target.password.value,
-      confirmPassword: e.target.confirmPassword.value, // Asure that the passwords match
+      confirmPassword: e.target.confirmPassword.value,
     };
 
-    // Validate that the passwords match
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      enqueueSnackbar('Passwords do not match!', { variant: 'error' });
       return;
     }
 
     try {
-      // Send the data to the backend and get the response
       const response = await fetch('http://localhost:3000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,14 +32,22 @@ const Register = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || 'Registration failed');
+        enqueueSnackbar(data.error || 'Registration failed', {
+          variant: 'error',
+        });
       } else {
-        alert('User registered successfully!');
-        navigate('/login');
+        enqueueSnackbar('User registered successfully!', {
+          variant: 'success',
+        });
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       }
     } catch (error) {
       console.error('Error during registration:', error);
-      alert('An error occurred while registering');
+      enqueueSnackbar('An error occurred while registering', {
+        variant: 'error',
+      });
     }
   };
 

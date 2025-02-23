@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useSnackbar } from 'notistack';
 
 const SettingsPanel = ({ setShowSettings, setUser }) => {
   const [username, setUsername] = useState(''); // Save the username to update
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSave = async () => {
     const storedToken = localStorage.getItem('token');
@@ -11,12 +13,16 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
 
     // Verify that the username is not empty or same as the current one
     if (!username.trim()) {
-      alert('Please enter a new username before saving.');
+      enqueueSnackbar('Please enter a new username before saving.', {
+        variant: 'warning',
+      });
       return;
     }
 
     if (username === currentUsername) {
-      alert('New username must be different from the current one.');
+      enqueueSnackbar('New username must be different from the current one.', {
+        variant: 'warning',
+      });
       return;
     }
 
@@ -41,7 +47,9 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Profile updated successfully!');
+        enqueueSnackbar('Profile updated successfully!', {
+          variant: 'success',
+        });
 
         // Save the new token if it exists
         if (data.token) {
@@ -55,7 +63,9 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
 
         setShowSettings(false);
       } else {
-        alert(data.error || 'Failed to update profile');
+        enqueueSnackbar(data.error || 'Failed to update profile', {
+          variant: 'error',
+        });
       }
     } catch (error) {
       console.error('Error updating profile:', error);

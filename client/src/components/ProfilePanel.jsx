@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import PlusIcon from '/Add_Contact.svg';
 import SettingsIcon from '/Settings.svg';
-import { jwtDecode } from 'jwt-decode';
+import { useSnackbar } from 'notistack';
 
 const ProfilePanel = ({ user, onAddContact, setShowSettings }) => {
   const [showPopup, setShowPopup] = useState(false); // Show the popup to add a new contact (start with false)
   const [username, setUsername] = useState(''); // Save the username to add (start empty)
+  const { enqueueSnackbar } = useSnackbar();
 
   // Show the popup to add a new contact
   const handleAddClick = () => setShowPopup(true);
@@ -18,7 +19,10 @@ const ProfilePanel = ({ user, onAddContact, setShowSettings }) => {
   };
 
   const handleAddContact = async () => {
-    if (!username.trim()) return alert('Username cannot be empty');
+    if (!username.trim())
+      return enqueueSnackbar('Username cannot be empty', {
+        variant: 'warning',
+      });
 
     try {
       const response = await fetch(
@@ -45,11 +49,15 @@ const ProfilePanel = ({ user, onAddContact, setShowSettings }) => {
         onAddContact(formattedContact);
         closePopup();
       } else {
-        alert(data.error || 'Failed to add contact');
+        enqueueSnackbar(data.error || 'Failed to add contact', {
+          variant: 'error',
+        });
       }
     } catch (error) {
       console.error('Error adding contact:', error);
-      alert('An error occurred when adding the contact');
+      enqueueSnackbar('An error occurred when adding the contact', {
+        variant: 'warning',
+      });
     }
   };
 
