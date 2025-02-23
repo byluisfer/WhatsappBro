@@ -73,6 +73,14 @@ const ChatArea = ({ selectedContact, userId }) => {
     }
   };
 
+  // To just press Enter to send the message ;)
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Avoid the form from submitting
+      handleSend(); //  Send the message
+    }
+  };
+
   return (
     <div className="flex flex-col h-full p-4 bg-white/15 rounded-3xl shadow-lg border border-white/20">
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
@@ -94,6 +102,7 @@ const ChatArea = ({ selectedContact, userId }) => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type a message..."
           className="flex-1 p-2 rounded-xl bg-white/30 border border-white/20 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />

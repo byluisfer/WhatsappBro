@@ -26,6 +26,7 @@ function App() {
           username: decoded.username,
           email: decoded.email,
           profilePic: decoded.profileImage,
+          userId: decoded.id,
         });
       } catch (error) {
         console.error('Error decoding token:', error);
@@ -91,9 +92,16 @@ function App() {
       <div className="flex-1 p-4">
         {showSettings ? (
           <SettingsPanel setShowSettings={setShowSettings} setUser={setUser} />
-        ) : selectedContact && userId ? (
-          <ChatArea selectedContact={selectedContact} userId={userId} />
-        ) : null}
+        ) : selectedContact && user.userId ? (
+          <ChatArea selectedContact={selectedContact} userId={user.userId} />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full">
+            <img src="/Logo.webp" alt="Chat Icon" className="w-24 h-24 mb-4" />
+            <p className="text-gray-400 text-2xl text-center">
+              Select a contact to chat
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -13,7 +13,14 @@ const Register = () => {
       username: e.target.username.value,
       email: e.target.email.value,
       password: e.target.password.value,
+      confirmPassword: e.target.confirmPassword.value, // Asure that the passwords match
     };
+
+    // Validate that the passwords match
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
 
     try {
       // Send the data to the backend and get the response
@@ -53,6 +60,11 @@ const Register = () => {
           <InputField id="username" label="Username" type="text" />
           <InputField id="email" label="Email" type="email" />
           <InputField id="password" label="Password" type="password" />
+          <InputField
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+          />
           <button
             className="w-full py-3 px-4 bg-teal-900 cursor-pointer hover:bg-teal-600/50 rounded-2xl shadow-lg text-white font-semibold transition duration-300"
             type="submit"
@@ -74,4 +86,5 @@ const Register = () => {
     </div>
   );
 };
+
 export default Register;

@@ -5,26 +5,26 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
 
   const handleSave = async () => {
     const storedToken = localStorage.getItem('token');
-    if (!storedToken) {
-      alert('No token found.');
-      return;
-    }
 
     const decodedToken = JSON.parse(atob(storedToken.split('.')[1])); // Decode the token
     const currentUsername = decodedToken.username || ''; // Get the current username
 
-    const finalUsername = username.trim() !== '' ? username : currentUsername; // Use the username or the current username
-
-    if (!finalUsername) {
-      alert('Username cannot be empty!');
+    // Verify that the username is not empty or same as the current one
+    if (!username.trim()) {
+      alert('Please enter a new username before saving.');
       return;
     }
 
-    sendProfileUpdate(finalUsername); // Send the update
+    if (username === currentUsername) {
+      alert('New username must be different from the current one.');
+      return;
+    }
+
+    sendProfileUpdate(username); // Send the update
   };
 
   // Send the profile update
-  const sendProfileUpdate = async (username, profilePic) => {
+  const sendProfileUpdate = async (username) => {
     try {
       const response = await fetch(
         'http://localhost:3000/api/auth/update-profile',
@@ -34,7 +34,7 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-          body: JSON.stringify({ username, profilePic }),
+          body: JSON.stringify({ username }),
         }
       );
 
@@ -42,10 +42,17 @@ const SettingsPanel = ({ setShowSettings, setUser }) => {
 
       if (response.ok) {
         alert('Profile updated successfully!');
+
+        // Save the new token if it exists
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+
         setUser((prevUser) => ({
           ...prevUser,
-          username, // Update the username
+          username, // Update the username in the state
         }));
+
         setShowSettings(false);
       } else {
         alert(data.error || 'Failed to update profile');

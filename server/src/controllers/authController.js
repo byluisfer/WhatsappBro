@@ -1,18 +1,27 @@
 const pool = require("../db/database");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const SECRET_KEY = "supersecret123";
 
 exports.register = async (req, res) => {
-  // Get the username, email and password from the request
-  const { username, email, password } = req.body;
+  const { username, email, password, confirmPassword } = req.body; // Recive the data from the request
   const defaultProfileImage = "Default_Profile.webp";
+
   try {
-    // Conselt to the db and save in a variable "result"
+    // Check if the passwords match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Passwords do not match!" });
+    }
+
+    // Encrypt the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const [result] = await pool.query(
       "INSERT INTO users (username, email, password, profileImage) VALUES (?, ?, ?, ?)",
-      [username, email, password, defaultProfileImage]
+      [username, email, hashedPassword, defaultProfileImage]
     );
+
     res.status(201).json({
       message: "User registered successfully",
       userId: result.insertId,
@@ -23,19 +32,24 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  // Get the email and password from the request
   const { email, password } = req.body;
   try {
-    // Consult to the db and save in a variable "rows"
     const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
-    // If the user does not exist or the password is incorrect, return an error
-    if (rows.length === 0 || rows[0].password !== password) {
+
+    if (rows.length === 0) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
+
     const user = rows[0];
-    // Create a token
+
+    // Compare the encrypted password with the one in the database
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
     const token = jwt.sign(
       {
         id: user.id,
@@ -48,6 +62,7 @@ exports.login = async (req, res) => {
         expiresIn: "1h",
       }
     );
+
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -140,13 +155,29 @@ exports.updateProfile = async (req, res) => {
       username = user[0].username;
     }
 
-    let query = "UPDATE users SET username = ? WHERE id = ?";
-    let params = [username, userId];
+    // Update the username in the database
+    await pool.query("UPDATE users SET username = ? WHERE id = ?", [
+      username,
+      userId,
+    ]);
 
-    await pool.query(query, params);
+    // Create a new token with the new username
+    const newToken = jwt.sign(
+      {
+        id: userId,
+        email: decoded.email,
+        username, // New username
+        profileImage: decoded.profileImage,
+      },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.status(200).json({
       message: "Profile updated successfully",
+      token: newToken, // Send the new token
     });
   } catch (error) {
     res.status(500).json({ error: "Error updating profile: " + error.message });
